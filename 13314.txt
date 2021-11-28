@@ -1,0 +1,34 @@
+		.model small		
+		.386 			
+		stack 100h 		
+		
+		dataseg 		
+		
+string db 100,100 dup ('$')  ;состоит из '$' т.к. это символ конца строки(для функции вывода)
+len dw 100
+		codeseg
+start:
+		startupcode
+		mov ah,0ah       
+		lea dx,string
+		int 21h 
+		mov AX, @DATA 
+		mov DS, AX
+		mov ES, AX
+		mov CX, len ; размер строки
+		lea DI, string ; адрес первого символа строки
+		mov AL, ' '; разделитель слов
+		xor BX, BX ; счетчик слов
+		cld
+next:
+		repe scasb ; пропускаем пробелы
+		je exit ; кроме пробелов ничего нет – закончить
+		inc BX ; нарастить счетчик
+		repne scasb ; ищем конец слова
+		jne exit ; строка закончилась – закончить
+		jmp next
+exit: ; BX – счетчик слов
+	
+quit:
+		exitcode 0
+end 
